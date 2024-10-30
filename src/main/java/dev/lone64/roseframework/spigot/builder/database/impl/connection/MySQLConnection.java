@@ -11,7 +11,7 @@ public class MySQLConnection extends SQLConnection {
 
     @SneakyThrows
     public MySQLConnection(String host, String port, String name, String username, String password) {
-        var logger = RoseLib.LOGGER;
+        var logger = RoseLib.getLogger();
         if (isConnection()) return;
 
         try {

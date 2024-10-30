@@ -41,13 +41,12 @@ public class RoseModule extends JavaPlugin implements Listener {
     public RoseModule() {
         INSTANCE = this;
         LOGGER = getLogger();
-
-        PREFIX = "<GRADIENT:FF9633>&l%s</GRADIENT:FFD633>&r".formatted(getName());
+        PREFIX = "<GRADIENT:FF9633>{PREFIX}</GRADIENT:FFD633>&r";
     }
 
     @Override
     public void onLoad() {
-        onInit();
+        load();
     }
 
     @Override
@@ -64,17 +63,17 @@ public class RoseModule extends JavaPlugin implements Listener {
         Spigot.register(this);
         Spigot.register(new DispenserArmorListener());
         Spigot.register(new ArmorerListener(XMaterial.getBlockedMaterials()));
-        onStart();
+        enable();
     }
 
     @Override
     public void onDisable() {
-        onStop();
+        disable();
     }
 
-    public void onInit() { }
-    public void onStart() { }
-    public void onStop() { }
+    public void load() { }
+    public void enable() { }
+    public void disable() { }
 
     @EventHandler(priority= EventPriority.HIGH, ignoreCancelled=true)
     public void onPlayerQuit(PlayerQuitEvent event) {

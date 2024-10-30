@@ -9,9 +9,12 @@ public class RoseLib {
 
     public static final RoseModule INSTANCE = RoseModule.INSTANCE;
 
-    public static final Logger LOGGER = INSTANCE.getLogger();
-    public static final File DATA_FOLDER = INSTANCE.getDataFolder();
-
+    public static Logger getLogger() {
+        return INSTANCE.getLogger();
+    }
+    public static File getDataFolder() {
+        return INSTANCE.getDataFolder();
+    }
     public static CommandManager getCommandManager() {
         return INSTANCE.getCommandManager();
     }

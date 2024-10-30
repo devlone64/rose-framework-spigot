@@ -15,10 +15,10 @@ public class SQLiteConnection extends SQLConnection {
 
     @SneakyThrows
     public SQLiteConnection(String dir, String fileName) {
-        var logger = RoseLib.LOGGER;
+        var logger = RoseLib.getLogger();
         if (isConnection()) return;
 
-        var dataFolder = RoseLib.DATA_FOLDER;
+        var dataFolder = RoseLib.getDataFolder();
         if (!dataFolder.exists()) {
             if (!dataFolder.mkdirs()) {
                 logger.severe("Cloud not create folder to '%s'.".formatted(dataFolder.getPath().replace("\\", "/")));
