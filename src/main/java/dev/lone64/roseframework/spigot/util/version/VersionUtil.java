@@ -1,6 +1,6 @@
 package dev.lone64.roseframework.spigot.util.version;
 
-import dev.lone64.roseframework.spigot.RoseModule;
+import dev.lone64.roseframework.spigot.RoseLib;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class VersionUtil {
                 int patch = (patchText == null || patchText.isEmpty()) ? 0 : Integer.parseInt(patchText);
                 mcVersion = (minor * 100) + patch;
             } catch (NumberFormatException e) {
-                RoseModule.INSTANCE.getLogger().warning(e.getMessage());
+                RoseLib.getLogger().warning(e.getMessage());
             }
         }
         return mcVersion;

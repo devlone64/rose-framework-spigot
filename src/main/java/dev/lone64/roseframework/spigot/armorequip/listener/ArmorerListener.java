@@ -4,6 +4,7 @@ import java.util.List;
 
 import dev.lone64.roseframework.spigot.armorequip.ArmorEquipEvent;
 import dev.lone64.roseframework.spigot.armorequip.ArmorType;
+import dev.lone64.roseframework.spigot.event.BaseListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -25,7 +26,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  * @author Arnah
  * @since Jul 30, 2015
  */
-public class ArmorerListener implements Listener{
+public class ArmorerListener implements BaseListener {
 
     private final List<String> blockedMaterials;
 

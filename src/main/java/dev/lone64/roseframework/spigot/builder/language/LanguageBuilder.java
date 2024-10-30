@@ -1,6 +1,6 @@
 package dev.lone64.roseframework.spigot.builder.language;
 
-import dev.lone64.roseframework.spigot.RoseModule;
+import dev.lone64.roseframework.spigot.RoseLib;
 import dev.lone64.roseframework.spigot.builder.config.yaml.YamlConfigBuilder;
 import dev.lone64.roseframework.spigot.builder.language.data.Language;
 import dev.lone64.roseframework.spigot.builder.language.storage.CachedLangList;
@@ -18,7 +18,7 @@ public class LanguageBuilder extends YamlConfigBuilder {
     private final Map<Class<? extends Language>, Language> languageMap = new HashMap<>();
 
     public LanguageBuilder(String folderName) {
-        super(RoseModule.INSTANCE, folderName, true);
+        super(RoseLib.getInstance(), folderName, true);
 
         this.folderName = folderName;
     }

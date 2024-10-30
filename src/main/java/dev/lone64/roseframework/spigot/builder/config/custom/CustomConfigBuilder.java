@@ -81,15 +81,15 @@ public class CustomConfigBuilder implements ConfigBuilderProvider {
     }
 
     public boolean create() {
-        if (FileUtil.isDirectory(getPlugin(), getFile().getName()))
-            return FileUtil.createFolder(getPlugin(), getFile().getPath());
-        return FileUtil.createFile(getPlugin(), getFile().getPath());
+        if (FileUtil.isDirectory(getFile().getName()))
+            return FileUtil.createFolder(getFile().getPath());
+        return FileUtil.createFile(getFile().getPath());
     }
 
     public boolean remove() {
-        if (FileUtil.isDirectory(getPlugin(), getFile().getName()))
-            return FileUtil.deleteFolder(getPlugin(), getFile().getPath());
-        return FileUtil.deleteFile(getPlugin(), getFile().getPath());
+        if (FileUtil.isDirectory(getFile().getName()))
+            return FileUtil.deleteFolder(getFile().getPath());
+        return FileUtil.deleteFile(getFile().getPath());
     }
 
     public void reload() {

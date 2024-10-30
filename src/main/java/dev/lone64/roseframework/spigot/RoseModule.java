@@ -1,12 +1,14 @@
 package dev.lone64.roseframework.spigot;
 
-import dev.lone64.roseframework.spigot.armorequip.XMaterial;
+import dev.lone64.roseframework.spigot.armorequip.Types;
 import dev.lone64.roseframework.spigot.armorequip.listener.ArmorerListener;
 import dev.lone64.roseframework.spigot.armorequip.listener.DispenserArmorListener;
 import dev.lone64.roseframework.spigot.builder.input.InputBuilder;
 import dev.lone64.roseframework.spigot.builder.inventory.impl.BukkitInventory;
 import dev.lone64.roseframework.spigot.builder.inventory.impl.CustomInventory;
 import dev.lone64.roseframework.spigot.command.manager.CommandManager;
+import dev.lone64.roseframework.spigot.event.BaseListener;
+import dev.lone64.roseframework.spigot.event.manager.EventManager;
 import dev.lone64.roseframework.spigot.spigot.Spigot;
 import dev.lone64.roseframework.spigot.util.Console;
 import dev.lone64.roseframework.spigot.util.message.Component;
@@ -17,7 +19,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -26,21 +27,15 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Logger;
-
 @Getter
-public class RoseModule extends JavaPlugin implements Listener {
+public class RoseModule extends JavaPlugin implements BaseListener {
 
     public static String PREFIX;
 
-    public static Logger LOGGER;
-    public static RoseModule INSTANCE;
-
+    public final EventManager eventManager = new EventManager(this);
     public final CommandManager commandManager = new CommandManager(this);
 
     public RoseModule() {
-        INSTANCE = this;
-        LOGGER = getLogger();
         PREFIX = "<GRADIENT:FF9633>{PREFIX}</GRADIENT:FFD633>&r";
     }
 
@@ -60,9 +55,9 @@ public class RoseModule extends JavaPlugin implements Listener {
             return;
         }
 
-        Spigot.register(this);
-        Spigot.register(new DispenserArmorListener());
-        Spigot.register(new ArmorerListener(XMaterial.getBlockedMaterials()));
+        this.eventManager.registerEvent(this);
+        this.eventManager.registerEvent(new DispenserArmorListener());
+        this.eventManager.registerEvent(new ArmorerListener(Types.getTypeList()));
         enable();
     }
 

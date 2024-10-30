@@ -1,6 +1,6 @@
 package dev.lone64.roseframework.spigot.util.entity;
 
-import dev.lone64.roseframework.spigot.RoseModule;
+import dev.lone64.roseframework.spigot.RoseLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -14,27 +14,27 @@ import java.util.concurrent.CompletableFuture;
 
 public class EntityUtil {
 
-    public static void hideAll(RoseModule plugin, Entity entity) {
+    public static void hideAll(Entity entity) {
         for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
-            loopPlayer.hideEntity(plugin, entity);
+            loopPlayer.hideEntity(RoseLib.getInstance(), entity);
         }
     }
 
-    public static void showAll(RoseModule plugin, Entity entity) {
+    public static void showAll(Entity entity) {
         for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
-            loopPlayer.showEntity(plugin, entity);
+            loopPlayer.showEntity(RoseLib.getInstance(), entity);
         }
     }
 
-    public static void hideAll(RoseModule plugin, List<Player> players, Entity entity) {
+    public static void hideAll(List<Player> players, Entity entity) {
         for (Player loopPlayer : players) {
-            loopPlayer.hideEntity(plugin, entity);
+            loopPlayer.hideEntity(RoseLib.getInstance(), entity);
         }
     }
 
-    public static void showAll(RoseModule plugin, List<Player> players, Entity entity) {
+    public static void showAll(List<Player> players, Entity entity) {
         for (Player loopPlayer : players) {
-            loopPlayer.showEntity(plugin, entity);
+            loopPlayer.showEntity(RoseLib.getInstance(), entity);
         }
     }
 
@@ -67,7 +67,7 @@ public class EntityUtil {
                 entity.teleport(new Location(player.getWorld(), x, y, z, yaw, pitch));
                 count--;
             }
-        }.runTaskTimer(RoseModule.INSTANCE, 0L, 2L);
+        }.runTaskTimer(RoseLib.getInstance(), 0L, 2L);
         return future;
     }
 

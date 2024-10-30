@@ -4,9 +4,9 @@ import lombok.Getter;
 
 import java.util.List;
 
-public class XMaterial {
+public class Types {
 
-    @Getter private static List<String> blockedMaterials = List.of(
+    @Getter private static List<String> typeList = List.of(
             "FURNACE", "CHEST", "TRAPPED_CHEST", "BEACON", "DISPENSER", "DROPPER", "HOPPER", "WORKBENCH", "ENCHANTMENT_TABLE",
             "ENDER_CHEST", "ANVIL", "BED_BLOCK", "FENCE_GATE", "SPRUCE_FENCE_GATE", "BIRCH_FENCE_GATE", "ACACIA_FENCE_GATE", "JUNGLE_FENCE_GATE",
             "DARK_OAK_FENCE_GATE", "IRON_DOOR_BLOCK", "WOODEN_DOOR", "SPRUCE_DOOR", "BIRCH_DOOR", "JUNGLE_DOOR", "ACACIA_DOOR", "DARK_OAK_DOOR",

@@ -20,14 +20,18 @@ import java.util.List;
 public class CommandManager {
 
     private final List<CommandData> commandDataList = new ArrayList<>();
-    private final RoseModule plugin;
+    private final RoseModule module;
 
-    public void register(BaseCommand... commands) {
-        for (var cmd : commands) register(new CommandData(getPlugin(), cmd));
+    public void registerCommand(BaseCommand command) {
+        register(new CommandData(getModule(), command));
     }
 
-    public void register(List<BaseCommand> commands) {
-        register(commands.toArray(new BaseCommand[0]));
+    public void registerCommands(BaseCommand... commands) {
+        for (var cmd : commands) register(new CommandData(getModule(), cmd));
+    }
+
+    public void registerCommands(List<BaseCommand> commands) {
+        registerCommands(commands.toArray(new BaseCommand[0]));
     }
 
     private void register(CommandData commandData) {
@@ -45,7 +49,7 @@ public class CommandManager {
                 command.setDescription(commandData.getComment());
                 command.setAliases(commandData.getAliases());
                 command.setPermission(commandData.getPermission());
-                commandMap.register(getPlugin().getName(), command);
+                commandMap.register(getModule().getName(), command);
                 getCommandDataList().add(commandData);
             }
         }
@@ -60,7 +64,7 @@ public class CommandManager {
             var command = commandMap.getCommand(name);
             if (command != null) command.unregister(commandMap);
         } catch (Exception e) {
-            getPlugin().getLogger().severe(e.getMessage());
+            getModule().getLogger().severe(e.getMessage());
         }
     }
 
@@ -73,11 +77,11 @@ public class CommandManager {
             var cmdCons = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
             cmdCons.setAccessible(true);
 
-            var command = cmdCons.newInstance(name, getPlugin());
-            commandMap.register(getPlugin().getName(), command);
+            var command = cmdCons.newInstance(name, getModule());
+            commandMap.register(getModule().getName(), command);
             return command;
         } catch (Exception e) {
-            getPlugin().getLogger().severe(e.getMessage());
+            getModule().getLogger().severe(e.getMessage());
             return null;
         }
     }
@@ -88,13 +92,13 @@ public class CommandManager {
             field.setAccessible(true);
             return (CommandMap) field.get(Bukkit.getServer());
         } catch (Exception e) {
-            getPlugin().getLogger().severe(e.getMessage());
+            getModule().getLogger().severe(e.getMessage());
             return null;
         }
     }
 
     private Field getField(String name) throws NoSuchFieldException {
-        return getPlugin().getServer().getClass().getDeclaredField("commandMap");
+        return getModule().getServer().getClass().getDeclaredField("commandMap");
     }
 
 }

@@ -1,6 +1,6 @@
 package dev.lone64.roseframework.spigot.util.bytes;
 
-import dev.lone64.roseframework.spigot.RoseModule;
+import dev.lone64.roseframework.spigot.RoseLib;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public class SerializeUtil {
         try (ObjectOutputStream objStream = new ObjectOutputStream(byteStream)) {
             objStream.writeObject(item);
         } catch (IOException e) {
-            RoseModule.LOGGER.warning(e.getMessage());
+            RoseLib.getLogger().severe(e.getMessage());
         }
         return byteStream.toByteArray();
     }
@@ -23,7 +23,7 @@ public class SerializeUtil {
         try (ObjectInputStream objStream = new ObjectInputStream(byteStream)) {
             return (T) objStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            RoseModule.LOGGER.warning(e.getMessage());
+            RoseLib.getLogger().severe(e.getMessage());
         }
         return null;
     }
@@ -33,7 +33,7 @@ public class SerializeUtil {
         try (ObjectInputStream objStream = new ObjectInputStream(byteStream)) {
             return (List<T>) objStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            RoseModule.LOGGER.warning(e.getMessage());
+            RoseLib.getLogger().severe(e.getMessage());
         }
         return new ArrayList<>();
     }

@@ -1,6 +1,6 @@
 package dev.lone64.roseframework.spigot.util.player;
 
-import dev.lone64.roseframework.spigot.RoseModule;
+import dev.lone64.roseframework.spigot.RoseLib;
 import dev.lone64.roseframework.spigot.util.player.data.UserData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,27 +23,27 @@ public class PlayerUtil {
         userData.getPlayer().getInventory().setArmorContents(userData.getArmorStorage());
     }
 
-    public static void hideAll(RoseModule module, Player player) {
+    public static void hideAll(Player player) {
         for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
-            loopPlayer.hidePlayer(module, player);
+            loopPlayer.hidePlayer(RoseLib.getInstance(), player);
         }
     }
 
-    public static void showAll(RoseModule module, Player player) {
+    public static void showAll(Player player) {
         for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
-            loopPlayer.showPlayer(module, player);
+            loopPlayer.showPlayer(RoseLib.getInstance(), player);
         }
     }
 
-    public static void hideAll(RoseModule module, List<Player> players, Player player) {
+    public static void hideAll(List<Player> players, Player player) {
         for (Player loopPlayer : players) {
-            loopPlayer.hidePlayer(module, player);
+            loopPlayer.hidePlayer(RoseLib.getInstance(), player);
         }
     }
 
-    public static void showAll(RoseModule module, List<Player> players, Player player) {
+    public static void showAll(List<Player> players, Player player) {
         for (Player loopPlayer : players) {
-            loopPlayer.showPlayer(module, player);
+            loopPlayer.showPlayer(RoseLib.getInstance(), player);
         }
     }
 

@@ -11,13 +11,13 @@ public class MySQLConnection extends SQLConnection {
 
     @SneakyThrows
     public MySQLConnection(String host, String port, String name, String username, String password) {
-        var logger = RoseLib.getLogger();
+        var logger = RoseLib.getInstance().getLogger();
         if (isConnection()) return;
 
         try {
             setConnection(DriverManager.getConnection("jdbc:mysql://%s:%s/%s".formatted(host, port, name), username, password));
         } catch (Exception exception) {
-            Spigot.disablePlugin(RoseLib.INSTANCE);
+            Spigot.disablePlugin(RoseLib.getInstance());
             logger.severe("Failed to connect to MySQL server. are the credentials correct?");
         }
     }
