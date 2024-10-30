@@ -1,7 +1,6 @@
 package dev.lone64.roseframework.spigot.spigot;
 
 import dev.lone64.roseframework.spigot.RoseModule;
-import dev.lone64.roseframework.spigot.command.BaseCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
@@ -17,10 +16,6 @@ public class Spigot {
 
     public static void disablePlugin(Plugin plugin) {
         Bukkit.getPluginManager().disablePlugin(plugin);
-    }
-
-    public static void register(BaseCommand... commands) {
-        RoseModule.INSTANCE.getCommandManager().register(commands);
     }
 
     public static void register(Listener... listeners) {

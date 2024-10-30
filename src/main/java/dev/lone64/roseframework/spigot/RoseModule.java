@@ -36,7 +36,7 @@ public class RoseModule extends JavaPlugin implements Listener {
     public static Logger LOGGER;
     public static RoseModule INSTANCE;
 
-    private final CommandManager commandManager = new CommandManager(this);
+    public final CommandManager commandManager = new CommandManager(this);
 
     public RoseModule() {
         INSTANCE = this;
