@@ -80,8 +80,9 @@ public class RoseModule extends JavaPlugin implements BaseListener {
     @EventHandler(priority= EventPriority.HIGH, ignoreCancelled=true)
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
         var player = event.getPlayer();
-        for (var commandData : getCommandManager().getCommandDataList()) {
-            if (commandData.getName() != null && commandData.getName().toLowerCase().contains(event.getMessage().replace("/", ""))) {
+        for (var name : getCommandManager().getCommandLabelList()) {
+            var commandData = getCommandManager().getCommandDataMap().get(name);
+            if (commandData != null && commandData.getName().toLowerCase().contains(event.getMessage().replace("/", ""))) {
                 if (commandData.getPermission() != null && !commandData.getPermission().isEmpty()) {
                     if (!player.hasPermission(commandData.getPermission())) {
                         event.setCancelled(true);

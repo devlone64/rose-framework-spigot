@@ -13,13 +13,16 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @AllArgsConstructor
 public class CommandManager {
 
-    private final List<CommandData> commandDataList = new ArrayList<>();
+    private final Map<String, CommandData> commandDataMap = new HashMap<>();
+    private final List<String> commandLabelList = new ArrayList<>();
     private final RoseModule module;
 
     public void registerCommand(BaseCommand command) {
@@ -50,7 +53,21 @@ public class CommandManager {
                 command.setAliases(commandData.getAliases());
                 command.setPermission(commandData.getPermission());
                 commandMap.register(getModule().getName(), command);
-                getCommandDataList().add(commandData);
+                getCommandLabelList().add(addCommandData(commandData.getName(), commandData));
+                for (var alisa : commandData.getAliases()) {
+                    var alisaCommand = createCommand(alisa);
+                    if (alisaCommand != null) {
+                        command.setExecutor(new CmdExecutor(commandData));
+                        command.setTabCompleter(new CmdExecutor(commandData));
+
+                        command.setName(commandData.getName());
+                        command.setUsage(commandData.getUsage());
+                        command.setDescription(commandData.getComment());
+                        command.setPermission(commandData.getPermission());
+                        commandMap.register(getModule().getName(), alisaCommand);
+                        getCommandLabelList().add(addCommandData(alisa, commandData));
+                    }
+                }
             }
         }
     }
@@ -84,6 +101,11 @@ public class CommandManager {
             getModule().getLogger().severe(e.getMessage());
             return null;
         }
+    }
+
+    private String addCommandData(String name, CommandData commandData) {
+        getCommandDataMap().put(name, commandData);
+        return name;
     }
 
     private CommandMap getCommandMap() {
