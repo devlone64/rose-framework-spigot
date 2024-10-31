@@ -11,10 +11,10 @@ import dev.lone64.roseframework.spigot.event.BaseListener;
 import dev.lone64.roseframework.spigot.event.manager.EventManager;
 import dev.lone64.roseframework.spigot.spigot.Spigot;
 import dev.lone64.roseframework.spigot.util.Console;
-import dev.lone64.roseframework.spigot.util.message.Component;
 import dev.lone64.roseframework.spigot.util.version.VersionUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -80,13 +80,18 @@ public class RoseModule extends JavaPlugin implements BaseListener {
     @EventHandler(priority= EventPriority.HIGH, ignoreCancelled=true)
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
         var player = event.getPlayer();
-        for (var name : getCommandManager().getCommandLabelList()) {
-            var commandData = getCommandManager().getCommandDataMap().get(name);
-            if (commandData != null && commandData.getName().toLowerCase().contains(event.getMessage().replace("/", ""))) {
-                if (commandData.getPermission() != null && !commandData.getPermission().isEmpty()) {
-                    if (!player.hasPermission(commandData.getPermission())) {
-                        event.setCancelled(true);
-                        player.sendMessage(Component.from(commandData.getBaseCommand().onPermissionRequest(player)));
+        for (var label : this.commandManager.getRegisteredCommands().keySet()) {
+            var pluginCommand = this.commandManager.getRegisteredCommands().get(label);
+            if (pluginCommand != null && pluginCommand.getName().toLowerCase().contains(event.getMessage().replace("/", ""))) {
+                if (pluginCommand.getPermission() != null && !pluginCommand.getPermission().isEmpty()) {
+                    if (!player.hasPermission(pluginCommand.getPermission())) {
+                        if (pluginCommand.getPermissionMessage() != null && !pluginCommand.getPermissionMessage().isEmpty()) {
+                            event.setCancelled(true);
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', pluginCommand.getPermissionMessage()));
+                        } else {
+                            event.setCancelled(true);
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou do not have permission to execute this command!"));
+                        }
                     }
                 }
             }

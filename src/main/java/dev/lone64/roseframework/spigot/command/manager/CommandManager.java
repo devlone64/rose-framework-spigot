@@ -1,126 +1,133 @@
 package dev.lone64.roseframework.spigot.command.manager;
 
-import dev.lone64.roseframework.spigot.RoseModule;
-import dev.lone64.roseframework.spigot.command.BaseCommand;
-import dev.lone64.roseframework.spigot.command.data.CommandData;
-import dev.lone64.roseframework.spigot.command.executor.CmdExecutor;
+import dev.lone64.roseframework.spigot.command.annotation.command.MainCommand;
+import dev.lone64.roseframework.spigot.command.root.RootCommand;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+@Setter
 @Getter
 @AllArgsConstructor
 public class CommandManager {
 
-    private final Map<String, CommandData> commandDataMap = new HashMap<>();
-    private final List<String> commandLabelList = new ArrayList<>();
-    private final RoseModule module;
+    private String title;
+    private String format;
 
-    public void registerCommand(BaseCommand command) {
-        register(new CommandData(getModule(), command));
+    private final JavaPlugin plugin;
+    private final Map<String, PluginCommand> registeredCommands = new HashMap<>();
+
+    public CommandManager(JavaPlugin plugin) {
+        this.plugin = plugin;
+
+        this.title = "&a&l%s".formatted(plugin.getName());
+        this.format = "&e/%NAME% %SUB_NAME%: &f%DESCRIPTION%";
     }
 
-    public void registerCommands(BaseCommand... commands) {
-        for (var cmd : commands) register(new CommandData(getModule(), cmd));
+    public void registerCommand(Object command) {
+        registerCommands(command);
     }
-
-    public void registerCommands(List<BaseCommand> commands) {
-        registerCommands(commands.toArray(new BaseCommand[0]));
-    }
-
-    private void register(CommandData commandData) {
+    
+    public void registerCommands(Object... commands) {
         var commandMap = getCommandMap();
         if (commandMap != null) {
-            unregister(commandData.getName());
+            for (var command : commands) {
+                var commandClass = command.getClass();
+                var mainCommand = commandClass.getAnnotation(MainCommand.class);
+                if (commandClass.isAnnotationPresent(MainCommand.class)) {
+                    unregisterCommands(command);
 
-            var command = createCommand(commandData.getName());
-            if (command != null) {
-                command.setExecutor(new CmdExecutor(commandData));
-                command.setTabCompleter(new CmdExecutor(commandData));
+                    var pluginCommand = setupPluginCommand(mainCommand.label());
+                    if (pluginCommand != null) {
+                        var rootCommand = new RootCommand(this.plugin, command, this);
+                        rootCommand.setupPluginCommand(pluginCommand);
 
-                command.setName(commandData.getName());
-                command.setUsage(commandData.getUsage());
-                command.setDescription(commandData.getComment());
-                command.setAliases(commandData.getAliases());
-                command.setPermission(commandData.getPermission());
-                commandMap.register(getModule().getName(), command);
-                getCommandLabelList().add(addCommandData(commandData.getName(), commandData));
-                for (var alisa : commandData.getAliases()) {
-                    var alisaCommand = createCommand(alisa);
-                    if (alisaCommand != null) {
-                        command.setExecutor(new CmdExecutor(commandData));
-                        command.setTabCompleter(new CmdExecutor(commandData));
+                        commandMap.register(this.plugin.getName(), pluginCommand);
+                        this.registeredCommands.put(mainCommand.label(), pluginCommand);
 
-                        command.setName(commandData.getName());
-                        command.setUsage(commandData.getUsage());
-                        command.setDescription(commandData.getComment());
-                        command.setPermission(commandData.getPermission());
-                        commandMap.register(getModule().getName(), alisaCommand);
-                        getCommandLabelList().add(addCommandData(alisa, commandData));
+                        for (var label : mainCommand.aliases()) {
+                            var aliasCommand = setupPluginCommand(label);
+                            if (aliasCommand != null) {
+                                aliasCommand.setUsage(mainCommand.usage());
+                                aliasCommand.setDescription(mainCommand.description());
+                                aliasCommand.setPermission(mainCommand.permission());
+                                aliasCommand.setPermissionMessage(mainCommand.permissionMessage());
+                                aliasCommand.setExecutor(pluginCommand.getExecutor());
+                                aliasCommand.setTabCompleter(pluginCommand.getTabCompleter());
+                                
+                                commandMap.register(this.plugin.getName(), aliasCommand);
+                                this.registeredCommands.put(label, aliasCommand);
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    public void unregister(String name) {
-        try {
-            var field = getField("commandMap");
-            field.setAccessible(true);
+    public void unregisterCommand(Object command) {
+        unregisterCommands(command);
+    }
 
-            var commandMap = (CommandMap) field.get(Bukkit.getServer());
-            var command = commandMap.getCommand(name);
-            if (command != null) command.unregister(commandMap);
-        } catch (Exception e) {
-            getModule().getLogger().severe(e.getMessage());
+    public void unregisterCommands(Object... commands) {
+        for (var command : commands) {
+            var commandClass = command.getClass();
+            var mainCommand = commandClass.getAnnotation(MainCommand.class);
+            if (commandClass.isAnnotationPresent(MainCommand.class)) {
+                unregister(mainCommand.label());
+                for (var alias : mainCommand.aliases()) {
+                    unregister(alias);
+                }
+            }
         }
     }
 
-    public PluginCommand createCommand(String name) {
+    private void unregister(String commandName) {
+        var commandMap = getCommandMap();
+        if (commandMap != null) {
+            var command = commandMap.getCommand(commandName);
+            if (command != null) {
+                if (command.getName().equalsIgnoreCase(commandName)) {
+                    command.unregister(commandMap);
+                    this.registeredCommands.remove(commandName);
+                }
+            }
+        }
+    }
+
+    private PluginCommand setupPluginCommand(String name) {
         try {
-            var field = getField("commandMap");
-            field.setAccessible(true);
+            var commandMap = getCommandMap();
+            if (commandMap != null) {
+                var constructor = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
+                constructor.setAccessible(true);
 
-            var commandMap = (CommandMap) field.get(Bukkit.getServer());
-            var cmdCons = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
-            cmdCons.setAccessible(true);
-
-            var command = cmdCons.newInstance(name, getModule());
-            commandMap.register(getModule().getName(), command);
-            return command;
-        } catch (Exception e) {
-            getModule().getLogger().severe(e.getMessage());
+                var pluginCommand = constructor.newInstance(name, this.plugin);
+                commandMap.register(this.plugin.getName(), pluginCommand);
+                return pluginCommand;
+            }
+            return null;
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | java.lang.reflect.InvocationTargetException e) {
             return null;
         }
-    }
-
-    private String addCommandData(String name, CommandData commandData) {
-        getCommandDataMap().put(name, commandData);
-        return name;
     }
 
     private CommandMap getCommandMap() {
         try {
-            var field = getField("commandMap");
-            field.setAccessible(true);
-            return (CommandMap) field.get(Bukkit.getServer());
+            var f = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            f.setAccessible(true);
+            return (CommandMap) f.get(Bukkit.getServer());
         } catch (Exception e) {
-            getModule().getLogger().severe(e.getMessage());
             return null;
         }
-    }
-
-    private Field getField(String name) throws NoSuchFieldException {
-        return getModule().getServer().getClass().getDeclaredField("commandMap");
     }
 
 }
