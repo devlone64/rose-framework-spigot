@@ -122,19 +122,21 @@ public class RootCommand extends PageExt {
             var tabCommand = method.getAnnotation(TabCommand.class);
             if (tabCommand.console() && sender instanceof ConsoleCommandSender) {
                 return new ArrayList<>();
+            } else if (!tabCommand.permission().isEmpty() && !sender.hasPermission(tabCommand.permission())) {
+                return new ArrayList<>();
             } else if (args.length == 1) {
                 if (!this.mainCommand.permission().isEmpty() && !sender.hasPermission(this.mainCommand.permission())) {
                     return new ArrayList<>(userSubCommands.keySet());
                 }
-                var subCommands = new ArrayList<String>();
+                var tabs = new ArrayList<String>();
                 if (!this.userSubCommands.isEmpty())
-                    subCommands.addAll(new ArrayList<>(userSubCommands.keySet()));
+                    tabs.addAll(new ArrayList<>(userSubCommands.keySet()));
                 if (!this.adminSubCommands.isEmpty())
-                    subCommands.addAll(new ArrayList<>(adminSubCommands.keySet()));
-                return subCommands;
+                    tabs.addAll(new ArrayList<>(adminSubCommands.keySet()));
+                return tabs;
             }
             var index = args.length - 1;
-            return CommandUtil.invokeList(method, this.command, sender, index, args[0]);
+            return CommandUtil.invokeList(method, this.command, sender, index, args[0], args);
         }
         return new ArrayList<>();
     }
