@@ -1,6 +1,6 @@
 package dev.lone64.roseframework.spigot.util.entity;
 
-import dev.lone64.roseframework.spigot.RoseLib;
+import dev.lone64.roseframework.spigot.RoseModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -14,27 +14,27 @@ import java.util.concurrent.CompletableFuture;
 
 public class EntityUtil {
 
-    public static void hideAll(Entity entity) {
+    public static void hideAll(RoseModule module, Entity entity) {
         for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
-            loopPlayer.hideEntity(RoseLib.getInstance(), entity);
+            loopPlayer.hideEntity(module, entity);
         }
     }
 
-    public static void showAll(Entity entity) {
+    public static void showAll(RoseModule module, Entity entity) {
         for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
-            loopPlayer.showEntity(RoseLib.getInstance(), entity);
+            loopPlayer.showEntity(module, entity);
         }
     }
 
-    public static void hideAll(List<Player> players, Entity entity) {
+    public static void hideAll(RoseModule module, List<Player> players, Entity entity) {
         for (Player loopPlayer : players) {
-            loopPlayer.hideEntity(RoseLib.getInstance(), entity);
+            loopPlayer.hideEntity(module, entity);
         }
     }
 
-    public static void showAll(List<Player> players, Entity entity) {
+    public static void showAll(RoseModule module, List<Player> players, Entity entity) {
         for (Player loopPlayer : players) {
-            loopPlayer.showEntity(RoseLib.getInstance(), entity);
+            loopPlayer.showEntity(module, entity);
         }
     }
 
@@ -43,7 +43,7 @@ public class EntityUtil {
         return location.getWorld().spawn(location, type);
     }
 
-    public static CompletableFuture<Entity> setCircleMoving(Player player, Entity entity) {
+    public static CompletableFuture<Entity> setCircleMoving(RoseModule module, Player player, Entity entity) {
         CompletableFuture<Entity> future = new CompletableFuture<>();
         new BukkitRunnable() {
             int count = 10;
@@ -67,7 +67,7 @@ public class EntityUtil {
                 entity.teleport(new Location(player.getWorld(), x, y, z, yaw, pitch));
                 count--;
             }
-        }.runTaskTimer(RoseLib.getInstance(), 0L, 2L);
+        }.runTaskTimer(module, 0L, 2L);
         return future;
     }
 

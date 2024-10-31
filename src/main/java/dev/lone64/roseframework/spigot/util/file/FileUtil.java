@@ -1,6 +1,6 @@
 package dev.lone64.roseframework.spigot.util.file;
 
-import dev.lone64.roseframework.spigot.RoseLib;
+import dev.lone64.roseframework.spigot.RoseModule;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
@@ -12,19 +12,19 @@ import java.util.logging.Level;
 
 public class FileUtil {
 
-    public static boolean createFile(String name) {
+    public static boolean createFile(RoseModule module, String name) {
         try {
-            File folder = RoseLib.getInstance().getDataFolder();
+            File folder = module.getDataFolder();
             if (!folder.exists()) {
                 if (!folder.mkdir()) {
-                    RoseLib.getLogger().severe("Cloud not create to '%s'".formatted(folder.getPath()));
+                    module.getLogger().severe("Cloud not create to '%s'".formatted(folder.getPath()));
                 }
             }
 
-            File file = new File(RoseLib.getInstance().getDataFolder(), name.replace(RoseLib.getInstance().getDataFolder().getPath() + "\\", ""));
+            File file = new File(module.getDataFolder(), name.replace(module.getDataFolder().getPath() + "\\", ""));
             if (file.exists()) return false;
-            if (RoseLib.getInstance().getResource("default/" + name.replace(RoseLib.getInstance().getDataFolder().getPath() + "\\", "")) != null) {
-                saveResource("default/" + name.replace(RoseLib.getInstance().getDataFolder().getPath() + "\\", ""), false);
+            if (module.getResource("default/" + name.replace(module.getDataFolder().getPath() + "\\", "")) != null) {
+                saveResource(module, "default/" + name.replace(module.getDataFolder().getPath() + "\\", ""), false);
                 return true;
             } else {
                 return file.createNewFile();
@@ -34,21 +34,21 @@ public class FileUtil {
         }
     }
 
-    public static boolean createFolder(String name) {
-        File file = new File(RoseLib.getInstance().getDataFolder(), name.replace(RoseLib.getInstance().getDataFolder().getPath() + "\\", ""));
+    public static boolean createFolder(RoseModule module, String name) {
+        File file = new File(module.getDataFolder(), name.replace(module.getDataFolder().getPath() + "\\", ""));
         if (file.exists()) return false;
         return file.mkdir();
     }
 
-    public static boolean deleteFile(String name) {
-        File file = new File(RoseLib.getInstance().getDataFolder(), name.replace(RoseLib.getInstance().getDataFolder().getPath() + "\\", ""));
+    public static boolean deleteFile(RoseModule module, String name) {
+        File file = new File(module.getDataFolder(), name.replace(module.getDataFolder().getPath() + "\\", ""));
         if (!file.exists()) return false;
         return file.delete();
     }
 
-    public static boolean deleteFolder(String name) {
+    public static boolean deleteFolder(RoseModule module, String name) {
         try {
-            File folder = new File(RoseLib.getInstance().getDataFolder(), name.replace(RoseLib.getInstance().getDataFolder().getPath() + "\\", ""));
+            File folder = new File(module.getDataFolder(), name.replace(module.getDataFolder().getPath() + "\\", ""));
             if (!folder.exists()) return false;
             FileUtils.deleteDirectory(folder);
             return true;
@@ -57,13 +57,13 @@ public class FileUtil {
         }
     }
 
-    public static boolean exists(String name) {
-        File file = new File(RoseLib.getInstance().getDataFolder(), name);
+    public static boolean exists(RoseModule module, String name) {
+        File file = new File(module.getDataFolder(), name);
         return file.exists();
     }
 
-    public static boolean isDirectory(String name) {
-        File directory = new File(RoseLib.getInstance().getDataFolder(), name);
+    public static boolean isDirectory(RoseModule module, String name) {
+        File directory = new File(module.getDataFolder(), name);
         if (!directory.exists()) return false;
         return Files.isDirectory(directory.toPath());
     }
@@ -74,27 +74,27 @@ public class FileUtil {
         return new ArrayList<>();
     }
 
-    public static void saveResource(String resourcePath, boolean replace) {
+    public static void saveResource(RoseModule module, String resourcePath, boolean replace) {
         if (resourcePath != null && !resourcePath.isEmpty()) {
             resourcePath = resourcePath.replace('\\', '/');
-            InputStream in = RoseLib.getInstance().getResource(resourcePath);
+            InputStream in = module.getResource(resourcePath);
             if (in == null) {
                 throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found.");
             } else {
-                File outFile = new File(RoseLib.getInstance().getDataFolder(), resourcePath.replace("default/", ""));
+                File outFile = new File(module.getDataFolder(), resourcePath.replace("default/", ""));
                 int lastIndex = resourcePath.lastIndexOf(47);
                 if (!resourcePath.contains("default/")) {
-                    File outDir = new File(RoseLib.getInstance().getDataFolder(), resourcePath.substring(0, Math.max(lastIndex, 0)).replace("default/", ""));
+                    File outDir = new File(module.getDataFolder(), resourcePath.substring(0, Math.max(lastIndex, 0)).replace("default/", ""));
                     if (!outDir.exists()) {
                         if (!outDir.mkdirs()) {
-                            RoseLib.getLogger().severe("Cloud not create " + outDir.getName());
+                            module.getLogger().severe("Cloud not create " + outDir.getName());
                         }
                     }
                 }
 
                 try {
                     if (outFile.exists() && !replace) {
-                        RoseLib.getLogger().log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+                        module.getLogger().log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
                     } else {
                         OutputStream out = new FileOutputStream(outFile);
                         byte[] buf = new byte[1024];
@@ -108,7 +108,7 @@ public class FileUtil {
                         in.close();
                     }
                 } catch (IOException e) {
-                    RoseLib.getLogger().log(Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, e);
+                    module.getLogger().log(Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, e);
                 }
             }
         } else {

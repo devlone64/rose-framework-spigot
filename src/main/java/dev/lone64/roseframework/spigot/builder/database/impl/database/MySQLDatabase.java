@@ -1,5 +1,6 @@
 package dev.lone64.roseframework.spigot.builder.database.impl.database;
 
+import dev.lone64.roseframework.spigot.RoseModule;
 import dev.lone64.roseframework.spigot.builder.database.sql.SQLDatabase;
 import dev.lone64.roseframework.spigot.builder.database.handler.ClassHandler;
 import dev.lone64.roseframework.spigot.builder.database.impl.connection.MySQLConnection;
@@ -18,8 +19,8 @@ public class MySQLDatabase implements SQLDatabase {
 
     private final MySQLConnection connection;
 
-    public MySQLDatabase(String hostname, String port, String name, String username, String password) {
-        this.connection = new MySQLConnection(hostname, port, name, username, password);
+    public MySQLDatabase(RoseModule module, String hostname, String port, String name, String username, String password) {
+        this.connection = new MySQLConnection(module, hostname, port, name, username, password);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package dev.lone64.roseframework.spigot.builder.database.impl.database;
 
+import dev.lone64.roseframework.spigot.RoseModule;
 import dev.lone64.roseframework.spigot.builder.database.sql.SQLDatabase;
 import dev.lone64.roseframework.spigot.builder.database.handler.ClassHandler;
 import dev.lone64.roseframework.spigot.builder.database.impl.connection.SQLiteConnection;
@@ -18,8 +19,12 @@ public class SQLiteDatabase implements SQLDatabase {
 
     private final SQLiteConnection connection;
 
-    public SQLiteDatabase(String filePath) {
-        this.connection = new SQLiteConnection(filePath);
+    public SQLiteDatabase(RoseModule module, String fileName) {
+        this.connection = new SQLiteConnection(module, fileName);
+    }
+
+    public SQLiteDatabase(RoseModule module, String dir, String fileName) {
+        this.connection = new SQLiteConnection(module, dir, fileName);
     }
 
     @Override

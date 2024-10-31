@@ -1,5 +1,6 @@
 package dev.lone64.roseframework.spigot.builder.config.custom;
 
+import dev.lone64.roseframework.spigot.RoseModule;
 import dev.lone64.roseframework.spigot.builder.config.ConfigBuilderProvider;
 import dev.lone64.roseframework.spigot.builder.config.custom.annotation.DeleteIfIncomplete;
 import dev.lone64.roseframework.spigot.builder.config.custom.annotation.DeleteOnEmpty;
@@ -45,51 +46,51 @@ public class CustomConfigBuilder implements ConfigBuilderProvider {
     private CommentedConfigurationNode configurationNode;
 
     private File file;
-    private JavaPlugin plugin;
+    private RoseModule module;
     private YamlConfigurationLoader loader;
 
-    public CustomConfigBuilder(JavaPlugin plugin, String name) {
-        this(plugin, name, null, true);
+    public CustomConfigBuilder(RoseModule module, String name) {
+        this(module, name, null, true);
     }
 
-    public CustomConfigBuilder(JavaPlugin plugin, String name, boolean load) {
-        this(plugin, name, null, load);
+    public CustomConfigBuilder(RoseModule module, String name, boolean load) {
+        this(module, name, null, load);
     }
 
-    public CustomConfigBuilder(JavaPlugin plugin, String name, String header) {
-        this(plugin, name, header, true);
+    public CustomConfigBuilder(RoseModule module, String name, String header) {
+        this(module, name, header, true);
     }
 
-    public CustomConfigBuilder(JavaPlugin plugin, String name, String header, boolean load) {
-        this(new File(plugin.getDataFolder(), name), plugin, header, load);
+    public CustomConfigBuilder(RoseModule module, String name, String header, boolean load) {
+        this(new File(module.getDataFolder(), name), module, header, load);
     }
 
-    public CustomConfigBuilder(File file, JavaPlugin plugin) {
-        this(file, plugin, null, true);
+    public CustomConfigBuilder(File file, RoseModule module) {
+        this(file, module, null, true);
     }
 
-    public CustomConfigBuilder(File file, JavaPlugin plugin, String header) {
-        this(file, plugin, header, true);
+    public CustomConfigBuilder(File file, RoseModule module, String header) {
+        this(file, module, header, true);
     }
 
-    public CustomConfigBuilder(File file, JavaPlugin plugin, String header, boolean load) {
+    public CustomConfigBuilder(File file, RoseModule module, String header, boolean load) {
         this.file = file;
-        this.plugin = plugin;
+        this.module = module;
         this.loader = YamlConfigurationLoader.builder().defaultOptions(opts -> opts.header(header).serializers(serializers))
                 .headerMode(HeaderMode.PRESET).nodeStyle(NodeStyle.BLOCK).indent(2).file(file).build();
         if (load) load();
     }
 
     public boolean create() {
-        if (FileUtil.isDirectory(getFile().getName()))
-            return FileUtil.createFolder(getFile().getPath());
-        return FileUtil.createFile(getFile().getPath());
+        if (FileUtil.isDirectory(getModule(), getFile().getName()))
+            return FileUtil.createFolder(getModule(), getFile().getPath());
+        return FileUtil.createFile(getModule(), getFile().getPath());
     }
 
     public boolean remove() {
-        if (FileUtil.isDirectory(getFile().getName()))
-            return FileUtil.deleteFolder(getFile().getPath());
-        return FileUtil.deleteFile(getFile().getPath());
+        if (FileUtil.isDirectory(getModule(), getFile().getName()))
+            return FileUtil.deleteFolder(getModule(), getFile().getPath());
+        return FileUtil.deleteFile(getModule(), getFile().getPath());
     }
 
     public void reload() {

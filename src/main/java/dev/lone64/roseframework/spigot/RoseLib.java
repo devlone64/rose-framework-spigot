@@ -1,15 +1,19 @@
 package dev.lone64.roseframework.spigot;
 
-import java.util.logging.Logger;
+import java.io.File;
 
 public class RoseLib {
 
-    public static RoseModule getInstance() {
-        return RoseModule.getPlugin(RoseModule.class);
+    public static RoseLib getInstance() {
+        return new RoseLib();
     }
 
-    public static Logger getLogger() {
-        return getInstance().getLogger();
+    public File getDataFolder(RoseModule module) {
+        return module.getDataFolder();
+    }
+
+    public File getDataFolder(RoseModule module, String path) {
+        return new File(module.getDataFolder(), path);
     }
 
 }

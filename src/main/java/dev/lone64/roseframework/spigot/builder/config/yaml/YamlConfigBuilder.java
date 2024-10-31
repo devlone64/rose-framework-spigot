@@ -1,6 +1,5 @@
 package dev.lone64.roseframework.spigot.builder.config.yaml;
 
-import dev.lone64.roseframework.spigot.RoseLib;
 import dev.lone64.roseframework.spigot.RoseModule;
 import dev.lone64.roseframework.spigot.builder.config.ConfigBuilderProvider;
 import dev.lone64.roseframework.spigot.util.item.ItemUtil;
@@ -20,26 +19,30 @@ import java.util.List;
 @Getter
 public class YamlConfigBuilder implements ConfigBuilderProvider {
 
+    private final RoseModule module;
+
     private File config;
     private String name;
     private boolean firstTime;
     private YamlConfiguration yml;
 
-    public YamlConfigBuilder(RoseModule plugin, String name) {
-        this(plugin, name, false);
+    public YamlConfigBuilder(RoseModule module, String name) {
+        this(module, name, false);
     }
 
-    public YamlConfigBuilder(RoseModule plugin, String dir, String name) {
-        this(plugin, dir, name, false);
+    public YamlConfigBuilder(RoseModule module, String dir, String name) {
+        this(module, dir, name, false);
     }
 
-    public YamlConfigBuilder(RoseModule plugin, String name, boolean isDir) {
+    public YamlConfigBuilder(RoseModule module, String name, boolean isDir) {
         this.firstTime = false;
 
-        var dataFolder = plugin.getDataFolder();
+        this.module = module;
+
+        var dataFolder = module.getDataFolder();
         if (!dataFolder.exists()) {
             if (!dataFolder.mkdirs()) {
-                RoseLib.getLogger().severe("Cloud not create folder to '%s'.".formatted(dataFolder.getPath()));
+                module.getLogger().severe("Cloud not create folder to '%s'.".formatted(dataFolder.getPath()));
                 return;
             }
         }
@@ -47,19 +50,19 @@ public class YamlConfigBuilder implements ConfigBuilderProvider {
         this.config = new File(dataFolder, name);
         if (!this.config.exists()) {
             this.firstTime = true;
-            RoseLib.getLogger().info("Creating to '%s'".formatted(this.config.getPath()));
+            module.getLogger().info("Creating to '%s'".formatted(this.config.getPath()));
             if (!isDir) {
                 try {
                     if (!this.config.createNewFile()) {
-                        RoseLib.getLogger().severe("Cloud not create file to '%s'.".formatted(this.config.getPath()));
+                        module.getLogger().severe("Cloud not create file to '%s'.".formatted(this.config.getPath()));
                         return;
                     }
                 } catch (IOException e) {
-                    RoseLib.getLogger().severe(e.getMessage());
+                    module.getLogger().severe(e.getMessage());
                 }
             } else {
                 if (!this.config.mkdirs()) {
-                    RoseLib.getLogger().severe("Cloud not create folder to '%s'.".formatted(this.config.getPath()));
+                    module.getLogger().severe("Cloud not create folder to '%s'.".formatted(this.config.getPath()));
                     return;
                 }
             }
@@ -70,13 +73,15 @@ public class YamlConfigBuilder implements ConfigBuilderProvider {
         this.name = name;
     }
 
-    public YamlConfigBuilder(RoseModule plugin, String dir, String name, boolean isDir) {
+    public YamlConfigBuilder(RoseModule module, String dir, String name, boolean isDir) {
         this.firstTime = false;
 
-        var dataFolder = plugin.getDataFolder();
+        this.module = module;
+
+        var dataFolder = module.getDataFolder();
         if (!dataFolder.exists()) {
             if (!dataFolder.mkdirs()) {
-                RoseLib.getLogger().severe("Cloud not create folder to '%s'.".formatted(dataFolder.getPath()));
+                module.getLogger().severe("Cloud not create folder to '%s'.".formatted(dataFolder.getPath()));
                 return;
             }
         }
@@ -84,7 +89,7 @@ public class YamlConfigBuilder implements ConfigBuilderProvider {
         var directory = new File(dataFolder, dir);
         if (!directory.exists()) {
             if (!directory.mkdirs()) {
-                RoseLib.getLogger().severe("Cloud not create folder to '%s'.".formatted(directory.getPath()));
+                module.getLogger().severe("Cloud not create folder to '%s'.".formatted(directory.getPath()));
                 return;
             }
         }
@@ -92,19 +97,19 @@ public class YamlConfigBuilder implements ConfigBuilderProvider {
         this.config = new File(directory, name);
         if (!this.config.exists()) {
             this.firstTime = true;
-            RoseLib.getLogger().info("Creating to '%s'".formatted(this.config.getPath()));
+            module.getLogger().info("Creating to '%s'".formatted(this.config.getPath()));
             if (!isDir) {
                 try {
                     if (!this.config.createNewFile()) {
-                        RoseLib.getLogger().severe("Cloud not create file to '%s'.".formatted(this.config.getPath()));
+                        module.getLogger().severe("Cloud not create file to '%s'.".formatted(this.config.getPath()));
                         return;
                     }
                 } catch (IOException e) {
-                    RoseLib.getLogger().severe(e.getMessage());
+                    module.getLogger().severe(e.getMessage());
                 }
             } else {
                 if (!this.config.mkdirs()) {
-                    RoseLib.getLogger().severe("Cloud not create folder to '%s'.".formatted(this.config.getPath()));
+                    module.getLogger().severe("Cloud not create folder to '%s'.".formatted(this.config.getPath()));
                     return;
                 }
             }
@@ -119,7 +124,7 @@ public class YamlConfigBuilder implements ConfigBuilderProvider {
         try {
             this.yml.save(this.config);
         } catch (IOException e) {
-            RoseLib.getLogger().severe(e.getMessage());
+            this.module.getLogger().severe(e.getMessage());
         }
     }
 

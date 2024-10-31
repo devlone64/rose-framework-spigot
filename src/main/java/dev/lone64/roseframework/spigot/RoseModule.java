@@ -48,10 +48,10 @@ public class RoseModule extends JavaPlugin implements BaseListener {
     public void onEnable() {
         if (VersionUtil.isSupportVersion()) {
             Bukkit.getPluginManager().disablePlugin(this);
-            Console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            Console.error("%s 플러그인은 %s 버전을 지원하지 않습니다.".formatted(getName(), VersionUtil.getVersion()));
-            Console.error("올바른 버전에서 플러그인을 사용해주세요.");
-            Console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            Console.error(this, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            Console.error(this, "%s 플러그인은 %s 버전을 지원하지 않습니다.".formatted(getName(), VersionUtil.getVersion()));
+            Console.error(this, "올바른 버전에서 플러그인을 사용해주세요.");
+            Console.error(this, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             return;
         }
 
@@ -104,7 +104,7 @@ public class RoseModule extends JavaPlugin implements BaseListener {
         if (InputBuilder.is(event.getPlayer())) {
             event.setCancelled(true);
             if (listener.onInit(event.getPlayer(), event.getMessage())) {
-                Spigot.sync(() -> InputBuilder.remove(event.getPlayer()));
+                Spigot.sync(this, () -> InputBuilder.remove(event.getPlayer()));
             }
         }
     }

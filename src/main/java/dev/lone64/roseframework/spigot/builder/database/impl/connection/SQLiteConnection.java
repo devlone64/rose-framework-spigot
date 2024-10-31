@@ -1,6 +1,6 @@
 package dev.lone64.roseframework.spigot.builder.database.impl.connection;
 
-import dev.lone64.roseframework.spigot.RoseLib;
+import dev.lone64.roseframework.spigot.RoseModule;
 import dev.lone64.roseframework.spigot.builder.database.sql.SQLConnection;
 import lombok.SneakyThrows;
 
@@ -9,16 +9,16 @@ import java.sql.DriverManager;
 
 public class SQLiteConnection extends SQLConnection {
 
-    public SQLiteConnection(String fileName) {
-        this(null, fileName);
+    public SQLiteConnection(RoseModule module, String fileName) {
+        this(module, null, fileName);
     }
 
     @SneakyThrows
-    public SQLiteConnection(String dir, String fileName) {
-        var logger = RoseLib.getInstance().getLogger();
+    public SQLiteConnection(RoseModule module, String dir, String fileName) {
+        var logger = module.getLogger();
         if (isConnection()) return;
 
-        var dataFolder = RoseLib.getInstance().getDataFolder();
+        var dataFolder = module.getDataFolder();
         if (!dataFolder.exists()) {
             if (!dataFolder.mkdirs()) {
                 logger.severe("Cloud not create folder to '%s'.".formatted(dataFolder.getPath().replace("\\", "/")));

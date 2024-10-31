@@ -1,6 +1,6 @@
 package dev.lone64.roseframework.spigot.spigot;
 
-import dev.lone64.roseframework.spigot.RoseLib;
+import dev.lone64.roseframework.spigot.RoseModule;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
@@ -21,32 +21,32 @@ public class Spigot {
         Bukkit.getPluginManager().addPermission(permission);
     }
 
-    public static <T> void register(Class<T> aClass, T t) {
-        Bukkit.getServicesManager().register(aClass, t, RoseLib.getInstance(), ServicePriority.Normal);
+    public static <T> void register(RoseModule module, Class<T> aClass, T t) {
+        Bukkit.getServicesManager().register(aClass, t, module, ServicePriority.Normal);
     }
 
-    public static BukkitTask async(Runnable runnable) {
-        return Bukkit.getScheduler().runTaskAsynchronously(RoseLib.getInstance(), runnable);
+    public static BukkitTask async(RoseModule module, Runnable runnable) {
+        return Bukkit.getScheduler().runTaskAsynchronously(module, runnable);
     }
 
-    public static BukkitTask sync(Runnable runnable) {
-        return Bukkit.getScheduler().runTask(RoseLib.getInstance(), runnable);
+    public static BukkitTask sync(RoseModule module, Runnable runnable) {
+        return Bukkit.getScheduler().runTask(module, runnable);
     }
 
-    public static BukkitTask asyncLater(Runnable runnable, long ticks) {
-        return Bukkit.getScheduler().runTaskLaterAsynchronously(RoseLib.getInstance(), runnable, ticks);
+    public static BukkitTask asyncLater(RoseModule module, Runnable runnable, long ticks) {
+        return Bukkit.getScheduler().runTaskLaterAsynchronously(module, runnable, ticks);
     }
 
-    public static BukkitTask asyncTimer(Runnable runnable, long delay, long ticks) {
-        return Bukkit.getScheduler().runTaskTimerAsynchronously(RoseLib.getInstance(), runnable, delay, ticks);
+    public static BukkitTask asyncTimer(RoseModule module, Runnable runnable, long delay, long ticks) {
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(module, runnable, delay, ticks);
     }
 
-    public static BukkitTask syncLater(Runnable runnable, long ticks) {
-        return Bukkit.getScheduler().runTaskLater(RoseLib.getInstance(), runnable, ticks);
+    public static BukkitTask syncLater(RoseModule module, Runnable runnable, long ticks) {
+        return Bukkit.getScheduler().runTaskLater(module, runnable, ticks);
     }
 
-    public static BukkitTask syncTimer(Runnable runnable, long delay, long ticks) {
-        return Bukkit.getScheduler().runTaskTimer(RoseLib.getInstance(), runnable, delay, ticks);
+    public static BukkitTask syncTimer(RoseModule module, Runnable runnable, long delay, long ticks) {
+        return Bukkit.getScheduler().runTaskTimer(module, runnable, delay, ticks);
     }
 
     public static boolean isQueued(int taskId) {

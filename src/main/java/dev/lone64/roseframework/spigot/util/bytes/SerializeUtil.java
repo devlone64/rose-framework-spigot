@@ -1,7 +1,5 @@
 package dev.lone64.roseframework.spigot.util.bytes;
 
-import dev.lone64.roseframework.spigot.RoseLib;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +10,10 @@ public class SerializeUtil {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try (ObjectOutputStream objStream = new ObjectOutputStream(byteStream)) {
             objStream.writeObject(item);
+            return byteStream.toByteArray();
         } catch (IOException e) {
-            RoseLib.getLogger().severe(e.getMessage());
+            return null;
         }
-        return byteStream.toByteArray();
     }
 
     public static <T> T deserialize(byte[] bytes) {
@@ -23,9 +21,8 @@ public class SerializeUtil {
         try (ObjectInputStream objStream = new ObjectInputStream(byteStream)) {
             return (T) objStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            RoseLib.getLogger().severe(e.getMessage());
+            return null;
         }
-        return null;
     }
 
     public static <T> List<T> deserializeList(byte[] bytes) {
@@ -33,9 +30,8 @@ public class SerializeUtil {
         try (ObjectInputStream objStream = new ObjectInputStream(byteStream)) {
             return (List<T>) objStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            RoseLib.getLogger().severe(e.getMessage());
+            return new ArrayList<>();
         }
-        return new ArrayList<>();
     }
 
 }
