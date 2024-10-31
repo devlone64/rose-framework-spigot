@@ -1,4 +1,4 @@
-package dev.lone64.roseframework.spigot.command.annotation.command;
+package dev.lone64.roseframework.spigot.command.annotation;
 
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.ElementType;

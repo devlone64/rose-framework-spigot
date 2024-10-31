@@ -1,11 +1,7 @@
 package dev.lone64.roseframework.spigot.command.root;
 
-import dev.lone64.roseframework.spigot.command.annotation.command.HelpCommand;
-import dev.lone64.roseframework.spigot.command.annotation.command.MainCommand;
-import dev.lone64.roseframework.spigot.command.annotation.command.SubCommand;
-import dev.lone64.roseframework.spigot.command.annotation.command.TabCommand;
-import dev.lone64.roseframework.spigot.command.annotation.filter.CommandFilter;
-import dev.lone64.roseframework.spigot.command.data.Filter;
+import dev.lone64.roseframework.spigot.command.annotation.*;
+import dev.lone64.roseframework.spigot.command.data.Path;
 import dev.lone64.roseframework.spigot.command.extension.PageExt;
 import dev.lone64.roseframework.spigot.command.manager.CommandManager;
 import dev.lone64.roseframework.spigot.command.util.CommandUtil;
@@ -34,7 +30,7 @@ public class RootCommand extends PageExt {
     private final Map<String, SubCommand> userSubCommands = new HashMap<>();
     private final Map<String, SubCommand> adminSubCommands = new HashMap<>();
 
-    private final Map<Filter, String> commandFilters = new HashMap<>();
+    private final Map<Path, String> commandPaths = new HashMap<>();
     private final Map<Class<?>, Method> commandMethods = new HashMap<>();
 
     public RootCommand(JavaPlugin plugin, Object command, CommandManager commandManager) {
@@ -46,10 +42,13 @@ public class RootCommand extends PageExt {
         this.commandManager = commandManager;
 
         initMethods();
-        for (var type : Filter.values()) {
-            if (!this.commandFilters.containsKey(type)) {
-                this.commandFilters.put(type, type.getMessage());
-            }
+
+        var context = this.commandClass.getAnnotation(CommandContext.class);
+        if (this.commandClass.isAnnotationPresent(CommandContext.class)) {
+            this.commandPaths.put(Path.NOT_REGISTERED, context.not_registered());
+            this.commandPaths.put(Path.NOT_SETUP_HELP, context.not_setup_help());
+            this.commandPaths.put(Path.NOT_FOUND_PAGE, context.not_found_page());
+            this.commandPaths.put(Path.NOT_FOUND_CMD, context.not_found_command());
         }
     }
 
@@ -65,7 +64,7 @@ public class RootCommand extends PageExt {
 
     private boolean performCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!this.commandManager.getRegisteredCommands().containsKey(label)) {
-            var message = this.commandFilters.get(Filter.NOT_REGISTERED);
+            var message = this.commandPaths.get(Path.NOT_REGISTERED);
             sender.sendMessage(Component.from(message));
             return true;
         } else if (this.mainCommand.console()) {
@@ -73,9 +72,10 @@ public class RootCommand extends PageExt {
             return true;
         } else if (args.length == 0) {
             if (this.mainCommand.autoHelp()) {
-                var message = this.commandFilters.get(Filter.NOT_FOUND_PAGE);
-                onInit(sender, 1, this.commandManager.getTitle(), page ->
-                        sender.sendMessage(Component.from(message)));
+                onInit(sender, 1, this.commandManager.getTitle(), page -> {
+                    var message = this.commandPaths.get(Path.NOT_FOUND_PAGE);
+                    sender.sendMessage(Component.from(message));
+                });
                 return true;
             }
 
@@ -83,12 +83,12 @@ public class RootCommand extends PageExt {
             if (this.commandMethods.containsKey(HelpCommand.class)) {
                 return CommandUtil.invokeBoolean(method, this.command, sender);
             }
-            var message = this.commandFilters.get(Filter.NOT_SETUP_HELP);
+            var message = this.commandPaths.get(Path.NOT_SETUP_HELP);
             sender.sendMessage(Component.from(message));
             return true;
         } else if (NumberUtil.getIntegerOrNull(args[0]) != null && this.mainCommand.autoHelp()) {
             var current = NumberUtil.getIntegerOrElse(args[0], 1);
-            var message = this.commandFilters.get(Filter.NOT_FOUND_PAGE);
+            var message = this.commandPaths.get(Path.NOT_FOUND_PAGE);
             onInit(sender, current, this.commandManager.getTitle(), page ->
                     sender.sendMessage(Component.from(message)));
             return true;
@@ -111,7 +111,7 @@ public class RootCommand extends PageExt {
                 }
             }
         }
-        var message = this.commandFilters.get(Filter.NOT_FOUND_CMD);
+        var message = this.commandPaths.get(Path.NOT_FOUND_CMD);
         sender.sendMessage(Component.from(message));
         return true;
     }
@@ -153,11 +153,6 @@ public class RootCommand extends PageExt {
                 }
             } else if (method.isAnnotationPresent(TabCommand.class)) {
                 this.commandMethods.put(TabCommand.class, method);
-            } else if (method.isAnnotationPresent(CommandFilter.class)) {
-                for (var type : Filter.values()) {
-                    var message = CommandUtil.invokeString(method, this.command, type);
-                    if (message != null) this.commandFilters.put(type, message);
-                }
             }
         }
     }

@@ -1,6 +1,6 @@
 package dev.lone64.roseframework.spigot.command.loader;
 
-import dev.lone64.roseframework.spigot.command.annotation.command.MainCommand;
+import dev.lone64.roseframework.spigot.command.annotation.MainCommand;
 import dev.lone64.roseframework.spigot.command.util.CommandUtil;
 import dev.lone64.roseframework.spigot.util.message.Component;
 import lombok.Getter;

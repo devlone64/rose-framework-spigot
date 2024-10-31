@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "dev.lone64.roseframework.spigot"
-version = "1.0.8"
+version = "1.0.9"
 
 repositories {
     mavenCentral()
