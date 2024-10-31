@@ -13,6 +13,7 @@ import dev.lone64.roseframework.spigot.spigot.Spigot;
 import dev.lone64.roseframework.spigot.util.Console;
 import dev.lone64.roseframework.spigot.util.version.VersionUtil;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,13 +31,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 @Getter
 public class RoseModule extends JavaPlugin implements BaseListener {
 
-    public static String PREFIX;
+    @Getter private static RoseModule wrapper;
+    @Setter @Getter private static String prefix;
 
     public final EventManager eventManager = new EventManager(this);
     public final CommandManager commandManager = new CommandManager(this);
 
     public RoseModule() {
-        PREFIX = "<GRADIENT:FF9633>{PREFIX}</GRADIENT:FFD633>&r";
+        wrapper = this;
+        prefix = "<GRADIENT:FF9633>{PREFIX}</GRADIENT:FFD633>&r";
     }
 
     @Override

@@ -23,6 +23,7 @@ public class CommandManager {
     private String format;
 
     private final JavaPlugin plugin;
+    private final Map<String, RootCommand> rootCommands = new HashMap<>();
     private final Map<String, PluginCommand> registeredCommands = new HashMap<>();
 
     public CommandManager(JavaPlugin plugin) {
@@ -51,6 +52,8 @@ public class CommandManager {
                         rootCommand.setupPluginCommand(pluginCommand);
 
                         commandMap.register(this.plugin.getName(), pluginCommand);
+
+                        this.rootCommands.put(mainCommand.label(), rootCommand);
                         this.registeredCommands.put(mainCommand.label(), pluginCommand);
 
                         for (var label : mainCommand.aliases()) {
@@ -90,6 +93,15 @@ public class CommandManager {
         }
     }
 
+    public RootCommand getRootCommand(Object command) {
+        for (var rootCommand : this.rootCommands.values()) {
+            if (rootCommand.getCommand().equals(command)) {
+                return rootCommand;
+            }
+        }
+        return null;
+    }
+
     private void unregister(String commandName) {
         var commandMap = getCommandMap();
         if (commandMap != null) {
@@ -97,6 +109,7 @@ public class CommandManager {
             if (command != null) {
                 if (command.getName().equalsIgnoreCase(commandName)) {
                     command.unregister(commandMap);
+                    this.rootCommands.remove(commandName);
                     this.registeredCommands.remove(commandName);
                 }
             }

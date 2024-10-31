@@ -42,13 +42,10 @@ public class RootCommand extends PageExt {
         this.commandManager = commandManager;
 
         initMethods();
-
-        var context = this.commandClass.getAnnotation(CommandContext.class);
-        if (this.commandClass.isAnnotationPresent(CommandContext.class)) {
-            this.commandPaths.put(Path.NOT_REGISTERED, context.not_registered());
-            this.commandPaths.put(Path.NOT_SETUP_HELP, context.not_setup_help());
-            this.commandPaths.put(Path.NOT_FOUND_PAGE, context.not_found_page());
-            this.commandPaths.put(Path.NOT_FOUND_CMD, context.not_found_command());
+        for (var path : Path.values()) {
+            if (!this.commandPaths.containsKey(path)) {
+                this.commandPaths.put(path, path.getMessage());
+            }
         }
     }
 
