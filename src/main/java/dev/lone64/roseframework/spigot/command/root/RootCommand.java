@@ -4,7 +4,7 @@ import dev.lone64.roseframework.spigot.command.annotation.command.HelpCommand;
 import dev.lone64.roseframework.spigot.command.annotation.command.MainCommand;
 import dev.lone64.roseframework.spigot.command.annotation.command.SubCommand;
 import dev.lone64.roseframework.spigot.command.annotation.command.TabCommand;
-import dev.lone64.roseframework.spigot.command.annotation.filters.CommandFilter;
+import dev.lone64.roseframework.spigot.command.annotation.filter.CommandFilter;
 import dev.lone64.roseframework.spigot.command.data.Filter;
 import dev.lone64.roseframework.spigot.command.extension.PageExt;
 import dev.lone64.roseframework.spigot.command.manager.CommandManager;
@@ -152,8 +152,10 @@ public class RootCommand extends PageExt {
             } else if (method.isAnnotationPresent(TabCommand.class)) {
                 this.commandMethods.put(TabCommand.class, method);
             } else if (method.isAnnotationPresent(CommandFilter.class)) {
-                var filter = method.getAnnotation(CommandFilter.class);
-                this.commandFilters.put(filter.type(), CommandUtil.invokeString(method, this.command));
+                for (var type : Filter.values()) {
+                    var message = CommandUtil.invokeString(method, this.command, type);
+                    if (message != null) this.commandFilters.put(type, message);
+                }
             }
         }
     }
