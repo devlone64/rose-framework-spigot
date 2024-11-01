@@ -1,6 +1,6 @@
 package dev.lone64.roseframework.spigot.command.manager;
 
-import dev.lone64.roseframework.spigot.command.annotation.MainCommand;
+import dev.lone64.roseframework.spigot.command.annotation.command.MainCommand;
 import dev.lone64.roseframework.spigot.command.root.RootCommand;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -62,7 +62,7 @@ public class CommandManager {
                                 aliasCommand.setUsage(mainCommand.usage());
                                 aliasCommand.setDescription(mainCommand.description());
                                 aliasCommand.setPermission(mainCommand.permission());
-                                aliasCommand.setPermissionMessage(mainCommand.permissionMessage());
+                                aliasCommand.setPermissionMessage(pluginCommand.getPermissionMessage());
                                 aliasCommand.setExecutor(pluginCommand.getExecutor());
                                 aliasCommand.setTabCompleter(pluginCommand.getTabCompleter());
                                 
