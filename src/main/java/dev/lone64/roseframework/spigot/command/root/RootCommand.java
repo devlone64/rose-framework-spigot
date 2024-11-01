@@ -67,18 +67,15 @@ public class RootCommand extends PageExt {
 
     private boolean performCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!this.commandManager.getRegisteredCommands().containsKey(label)) {
-            var message = this.commandRoutes.get(Path.NOT_REGISTERED);
-            sender.sendMessage(Component.from(message));
+            sender.sendMessage(Component.from(this.commandRoutes.get(Path.NOT_REGISTERED)));
             return true;
         } else if (!this.mainCommand.consoleAvailable() && sender instanceof ConsoleCommandSender) {
-            var message = this.commandRoutes.get(Path.CONSOLE);
-            sender.sendMessage(Component.from(message));
+            sender.sendMessage(Component.from(this.commandRoutes.get(Path.CONSOLE)));
             return true;
         } else if (args.length == 0) {
             if (this.mainCommand.helpAvailable()) {
-                var message = this.commandRoutes.get(Path.NOT_FOUND_PAGE);
                 onInit(sender, 1, this.commandManager.getTitle(), page ->
-                        sender.sendMessage(Component.from(message)));
+                        sender.sendMessage(Component.from(this.commandRoutes.get(Path.NOT_FOUND_PAGE))));
                 return true;
             }
             var method = this.commandMethods.get(HelpCommand.class);
@@ -86,19 +83,16 @@ public class RootCommand extends PageExt {
                 try {
                     return CommandUtil.invokeBoolean(method, this.command, sender);
                 } catch (IllegalArgumentException e) {
-                    var message = this.commandRoutes.get(Path.ARGUMENT_TYPE_MISMATCH);
-                    sender.sendMessage(Component.from(message));
+                    sender.sendMessage(Component.from(this.commandRoutes.get(Path.ARGUMENT_TYPE_MISMATCH)));
                     return true;
                 }
             }
-            var message = this.commandRoutes.get(Path.NOT_SETUP_HELP);
-            sender.sendMessage(Component.from(message));
+            sender.sendMessage(Component.from(this.commandRoutes.get(Path.NOT_SETUP_HELP)));
             return true;
         } else if (NumberUtil.getIntegerOrNull(args[0]) != null && this.mainCommand.helpAvailable()) {
             var current = NumberUtil.getIntegerOrElse(args[0], 1);
-            var message = this.commandRoutes.get(Path.NOT_FOUND_PAGE);
             onInit(sender, current, this.commandManager.getTitle(), page ->
-                    sender.sendMessage(Component.from(message)));
+                    sender.sendMessage(Component.from(this.commandRoutes.get(Path.NOT_FOUND_PAGE))));
             return true;
         }
         for (var method : this.commandClass.getDeclaredMethods()) {
@@ -106,12 +100,10 @@ public class RootCommand extends PageExt {
                 var subCommand = method.getAnnotation(SubCommand.class);
                 if (args[0].equalsIgnoreCase(subCommand.label())) {
                     if (!subCommand.consoleAvailable() && sender instanceof ConsoleCommandSender) {
-                        var message = this.commandRoutes.get(Path.CONSOLE);
-                        sender.sendMessage(Component.from(message));
+                        sender.sendMessage(Component.from(this.commandRoutes.get(Path.CONSOLE)));
                         return true;
                     } else if (!subCommand.permission().isEmpty() && !sender.hasPermission(subCommand.permission())) {
-                        var message = this.commandRoutes.get(Path.PERMISSION);
-                        sender.sendMessage(Component.from(message));
+                        sender.sendMessage(Component.from(this.commandRoutes.get(Path.PERMISSION)));
                         return true;
                     }
                     try {
@@ -119,15 +111,13 @@ public class RootCommand extends PageExt {
                         System.arraycopy(args, 1, arguments, 0, arguments.length);
                         return CommandUtil.invokeBoolean(method, this.command, sender, arguments);
                     } catch (IllegalArgumentException e) {
-                        var message = this.commandRoutes.get(Path.ARGUMENT_TYPE_MISMATCH);
-                        sender.sendMessage(Component.from(message));
+                        sender.sendMessage(Component.from(this.commandRoutes.get(Path.ARGUMENT_TYPE_MISMATCH)));
                         return true;
                     }
                 }
             }
         }
-        var message = this.commandRoutes.get(Path.NOT_FOUND_CMD);
-        sender.sendMessage(Component.from(message));
+        sender.sendMessage(Component.from(this.commandRoutes.get(Path.NOT_FOUND_CMD)));
         return true;
     }
 
@@ -149,7 +139,7 @@ public class RootCommand extends PageExt {
                 return subCommands;
             }
             var index = args.length - 1;
-            return CommandUtil.invokeList(method, this.command, sender, index, args[0]);
+            return CommandUtil.invokeList(method, this.command, sender, index, args[0], args);
         }
         return new ArrayList<>();
     }
